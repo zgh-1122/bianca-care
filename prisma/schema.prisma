@@ -1,0 +1,39 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Order {
+  id            String   @id @default(uuid())
+  orderNumber   String   @unique
+  fullName      String
+  phone         String
+  address       String
+  city          String?
+  paymentMethod String
+  paymentDetail String?
+  totalAmount   Float
+  cartItems     Json
+  createdAt     DateTime @default(now())
+}
+
+model SupportRequest {
+  id               String   @id @default(cuid())
+  type             String   @default("complaint")
+  orderId          String?
+  email            String
+  reasonOrCategory String
+  details          String
+  status           String   @default("Pending")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@map("support_requests")
+}
+
