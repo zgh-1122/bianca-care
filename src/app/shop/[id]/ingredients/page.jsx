@@ -4,11 +4,9 @@ import { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import Link from "next/link";
 import { motion, useReducedMotion } from "framer-motion";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Sparkles, ShieldCheck, HeartPulse } from "lucide-react";
 import { products } from "../../../data/products";
 
-// Agar product ka outline pehchana na jaye to dot product ki aadhi chaurai ke itne hisse par lagta hai
-// (0.8 = 80%). Dot product se bahar lage to isay barhayein, andar lage to ghatayein.
 const FALLBACK_EDGE = 0.8;
 
 const ICONS = [
@@ -33,7 +31,6 @@ const getIcon = (name) => {
   return match ? match[1] : "🌿";
 };
 
-// Photo ko chhota karke pixel check karta hai: kahan product hai aur kahan background
 function buildMask(img) {
   const MAX = 160;
   const nw = img.naturalWidth;
@@ -49,7 +46,7 @@ function buildMask(img) {
   canvas.height = h;
   const ctx = canvas.getContext("2d", { willReadFrequently: true });
   ctx.drawImage(img, 0, 0, w, h);
-  const { data } = ctx.getImageData(0, 0, w, h); // browser ne roka to yahan error aayega
+  const { data } = ctx.getImageData(0, 0, w, h);
 
   const idx = (x, y) => (y * w + x) * 4;
   const corners = [idx(0, 0), idx(w - 1, 0), idx(0, h - 1), idx(w - 1, h - 1)];
@@ -78,7 +75,7 @@ function buildMask(img) {
   }
 
   const ratio = count / (w * h);
-  if (ratio < 0.03 || ratio > 0.97) return null; // andaza bharosemand nahi
+  if (ratio < 0.03 || ratio > 0.97) return null;
 
   const rowHas = (y) => {
     let c = 0;
@@ -98,7 +95,6 @@ function buildMask(img) {
   return { w, h, data: mask, top: top / h, bottom: (bottom + 1) / h };
 }
 
-// Kisi height par product ka left aur right kinara (photo ki chaurai ke hisab se 0 se 1)
 function edgesAt(mask, yNorm) {
   const { w, h, data } = mask;
   const cy = Math.min(h - 1, Math.max(0, Math.round(yNorm * (h - 1))));
@@ -128,20 +124,19 @@ export default function IngredientsPage() {
   const product = products.find((p) => p.id === Number(id));
   const imageUrl = product ? product.image.trim() : "";
 
-  const [size, setSize] = useState(270);
+  const [size, setSize] = useState(240);
   const [natural, setNatural] = useState(null);
   const [mask, setMask] = useState(null);
   const [ready, setReady] = useState(false);
   const imgRef = useRef(null);
 
   useEffect(() => {
-    const update = () => setSize(window.innerWidth < 640 ? 160 : 270);
+    const update = () => setSize(window.innerWidth < 640 ? 150 : 240);
     update();
     window.addEventListener("resize", update);
     return () => window.removeEventListener("resize", update);
   }, []);
 
-  // Product ka outline pehchanna (alag chhoti image par, taake asli image kabhi na rukay)
   useEffect(() => {
     setNatural(null);
     setMask(null);
@@ -165,9 +160,7 @@ export default function IngredientsPage() {
       try {
         const result = buildMask(probe);
         if (!cancelled) setMask(result);
-      } catch (error) {
-        // is image ko browser parhne nahi deta, andaze wala tareeqa chalega
-      }
+      } catch (error) {}
       finish();
     };
     probe.onerror = finish;
@@ -196,15 +189,14 @@ export default function IngredientsPage() {
 
   const N = names.length;
   const S = size;
-  const pad = 30;
-  const gap = S < 200 ? 20 : 50;
+  const pad = 20;
+  const gap = S < 200 ? 15 : 35;
 
-  // Photo ka asli size (S x S ke andar fit)
   const fit = natural ? Math.min(S / natural.w, S / natural.h) : 1;
   const imgW = natural ? natural.w * fit : S;
   const imgH = natural ? natural.h * fit : S;
   const stageH = imgH + pad * 2;
-  const labelStart = imgW / 2 + gap; // saare labels ek hi line me
+  const labelStart = imgW / 2 + gap;
 
   const items = names.map((name, i) => {
     const left = i % 2 === 0;
@@ -217,32 +209,31 @@ export default function IngredientsPage() {
       const e = edgesAt(mask, yNorm);
       if (e) dist = left ? (0.5 - e.left) * imgW : (e.right - 0.5) * imgW;
     }
-    dist = Math.max(8, Math.min(dist, imgW / 2));
+    dist = Math.max(6, Math.min(dist, imgW / 2));
 
     return { name, i, left, dist, y: pad + yNorm * imgH };
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#F5F5DC] via-[#EFEFE0] to-[#D8F3DC]/40 text-[#1B4332] px-4 sm:px-6 py-10 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-b from-[#F5F5DC] via-[#EFEFE0] to-[#D8F3DC]/40 text-[#1B4332] px-3 sm:px-6 py-4 sm:py-8 relative overflow-x-hidden">
       <div className="absolute top-24 left-10 w-80 h-80 bg-[#52B788]/15 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-2xl mx-auto relative">
         <Link
-          href={`/shop/${product.id}`}
+          href={`/shop`}
           className="inline-flex items-center gap-2 text-sm font-bold hover:text-[#52B788] transition-colors"
         >
-          <ArrowLeft className="w-4 h-4" /> Back to product
+          <ArrowLeft className="w-4 h-4" /> Back to shop
         </Link>
 
-        <div className="text-center mt-6 space-y-2">
-          <h1 className="text-2xl sm:text-4xl font-black leading-tight">{product.name}</h1>
-          <p className="text-sm text-[#2D6A4F] font-medium">
-            Inside this bottle: {N} key ingredients
+        <div className="text-center mt-2 sm:mt-4 space-y-1">
+          <h1 className="text-xl sm:text-3xl font-black leading-tight">{product.name}</h1>
+          <p className="text-xs sm:text-sm text-[#2D6A4F] font-medium">
+            Inside this bottle: {N} key botanical active ingredients
           </p>
         </div>
 
-        <div className="relative mx-auto mt-6" style={{ height: stageH, width: "100%" }}>
-          {/* Product: poori, beech me */}
+        <div className="relative mx-auto mt-2 sm:mt-4 max-w-[320px] sm:max-w-none" style={{ height: stageH, width: "100%" }}>
           <motion.img
             ref={imgRef}
             src={imageUrl}
@@ -254,7 +245,7 @@ export default function IngredientsPage() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: reduceMotion ? 0 : 0.6 }}
-            className="absolute select-none"
+            className="absolute select-none object-contain"
             style={{
               top: pad,
               left: `calc(50% - ${imgW / 2}px)`,
@@ -264,14 +255,12 @@ export default function IngredientsPage() {
             }}
           />
 
-          {/* Lines + dots (product ke kinare par) + icons + naam */}
           {items.map(({ name, i, left, dist, y }) => {
             const lineLen = labelStart - dist;
             const delay = reduceMotion ? 0 : 0.15 + i * 0.15;
 
             return (
               <div key={name}>
-                {/* Line: product ke kinare se label tak */}
                 <motion.div
                   aria-hidden
                   className="absolute h-[2px] bg-[#52B788]"
@@ -288,24 +277,22 @@ export default function IngredientsPage() {
                   }}
                 />
 
-                {/* Dot: bilkul product ke kinare par */}
                 <motion.span
                   aria-hidden
-                  className="absolute w-2.5 h-2.5 rounded-full bg-[#1B4332]"
+                  className="absolute w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full bg-[#1B4332]"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: ready ? 1 : 0 }}
                   transition={{ duration: 0.3, delay: ready ? delay : 0 }}
                   style={{
-                    top: y - 5,
+                    top: y - 4,
                     ...(left
-                      ? { right: `calc(50% + ${dist - 5}px)` }
-                      : { left: `calc(50% + ${dist - 5}px)` }),
+                      ? { right: `calc(50% + ${dist}px)` }
+                      : { left: `calc(50% + ${dist}px)` }),
                   }}
                 />
 
-                {/* Icon + naam */}
                 <motion.div
-                  className={`absolute flex flex-col gap-1 ${
+                  className={`absolute flex flex-col gap-0.5 ${
                     left ? "items-end text-right" : "items-start text-left"
                   }`}
                   initial={{ opacity: 0 }}
@@ -320,10 +307,10 @@ export default function IngredientsPage() {
                       : { left: `calc(50% + ${labelStart}px)` }),
                   }}
                 >
-                  <span className="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-white border-2 border-[#1B4332] shadow-md flex items-center justify-center text-lg sm:text-2xl">
+                  <span className="w-6 h-6 sm:w-10 sm:h-10 rounded-full bg-white border-2 border-[#1B4332] shadow-md flex items-center justify-center text-xs sm:text-xl">
                     {getIcon(name)}
                   </span>
-                  <span className="text-[10px] sm:text-xs font-black leading-tight">
+                  <span className="text-[8px] sm:text-xs font-black leading-tight max-w-[80px] sm:max-w-none truncate sm:overflow-visible">
                     {name}
                   </span>
                 </motion.div>
@@ -332,9 +319,31 @@ export default function IngredientsPage() {
           })}
         </div>
 
-        <p className="mt-8 text-center text-sm text-[#2D6A4F] max-w-md mx-auto leading-relaxed">
-          {product.howToUse}
-        </p>
+        {/* Extra Information / Benefits Section with 2px Footer Green (#1B4332) Borders & Compact Spacing */}
+        <div className="mt-4 sm:mt-6 grid grid-cols-3 gap-2 px-1">
+          <div className="bg-[#E8F0E5] p-2.5 rounded-xl border-2 border-[#1B4332] text-center shadow-sm">
+            <Sparkles className="w-4 h-4 mx-auto text-[#1B4332] mb-0.5" />
+            <h4 className="text-[10px] sm:text-xs font-bold text-[#1B4332]">100% Organic</h4>
+            <p className="text-[8px] text-[#2D6A4F]">Pure extracts</p>
+          </div>
+          <div className="bg-[#E8F0E5] p-2.5 rounded-xl border-2 border-[#1B4332] text-center shadow-sm">
+            <ShieldCheck className="w-4 h-4 mx-auto text-[#1B4332] mb-0.5" />
+            <h4 className="text-[10px] sm:text-xs font-bold text-[#1B4332]">Dermatologist</h4>
+            <p className="text-[8px] text-[#2D6A4F]">Safe & tested</p>
+          </div>
+          <div className="bg-[#E8F0E5] p-2.5 rounded-xl border-2 border-[#1B4332] text-center shadow-sm">
+            <HeartPulse className="w-4 h-4 mx-auto text-[#1B4332] mb-0.5" />
+            <h4 className="text-[10px] sm:text-xs font-bold text-[#1B4332]">Deep Care</h4>
+            <p className="text-[8px] text-[#2D6A4F]">Long lasting</p>
+          </div>
+        </div>
+
+        <div className="mt-3 sm:mt-4 bg-[#E8F0E5] p-3 rounded-xl border-2 border-[#1B4332] text-center shadow-sm mb-2">
+          <h3 className="text-xs sm:text-sm font-bold text-[#1B4332] mb-0.5">How To Apply & Use</h3>
+          <p className="text-[11px] sm:text-sm text-[#2D6A4F] max-w-md mx-auto leading-relaxed">
+            {product.howToUse}
+          </p>
+        </div>
       </div>
     </div>
   );
