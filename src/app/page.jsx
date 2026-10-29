@@ -1,4 +1,4 @@
-
+// FILE: src/app/page.jsx
 "use client";
 
 import React, { useState, useEffect } from 'react';
@@ -155,13 +155,13 @@ export default function Home() {
               loading="eager"
               decoding="async"
               draggable={false}
-              className={`absolute inset-0 w-full h-full object-cover object-center transition-opacity duration-700 ease-in-out ${
+              className={`absolute inset-0 w-full h-full object-cover object-center sm:object-center transition-opacity duration-700 ease-in-out ${
                 i === currentBgIndex ? "opacity-100" : "opacity-0"
               }`}
             />
           ))}
 
-          <div className="absolute inset-0 bg-black/40 z-10" />
+          <div className="absolute inset-0 bg-black/45 z-10" />
         </div>
 
         {/* Foreground Content */}
@@ -181,7 +181,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-4xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-[1.1] text-white drop-shadow-lg"
+            className="text-3xl sm:text-6xl lg:text-7xl font-black tracking-tight leading-[1.1] text-white drop-shadow-lg"
           >
             Pure Radiance, <br />
 
@@ -194,7 +194,7 @@ export default function Home() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-[#EAF4EC] text-sm sm:text-base max-w-xl mx-auto leading-relaxed font-semibold drop-shadow"
+            className="text-[#EAF4EC] text-xs sm:text-base max-w-xl mx-auto leading-relaxed font-semibold drop-shadow"
           >
             Experience the ultimate organic skincare routine designed to protect, hydrate, and rejuvenate your skin everyday.
           </motion.p>
@@ -330,7 +330,7 @@ export default function Home() {
                 {prod.badge}
               </span>
 
-              {/* Product image and Quick View */}
+              {/* Product image and Quick View (Always visible on mobile, hover on desktop) */}
               <div className="h-52 w-full relative overflow-hidden bg-[#E8F0E5]">
                 <img
                   src={prod.image}
@@ -338,10 +338,11 @@ export default function Home() {
                   className="h-full w-full object-cover group-hover:scale-110 transition-all duration-500"
                 />
 
-                <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
+                {/* Quick View Button: Visible on mobile via block/sm:hidden, and hover on desktop via hidden sm:group-hover:flex */}
+                <div className="absolute inset-0 flex items-center justify-center bg-black/30 sm:bg-black/40 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity duration-300 z-10">
                   <button
                     onClick={() => setSelectedQuickView(prod)}
-                    className="px-5 py-2.5 bg-[#1B4332] text-[#F5F5DC] font-extrabold text-xs rounded-full shadow-2xl flex items-center gap-2 border-2 border-[#52B788] hover:bg-[#2D6A4F] cursor-pointer transition-all"
+                    className="px-4 py-2 sm:px-5 sm:py-2.5 bg-[#1B4332] text-[#F5F5DC] font-extrabold text-xs rounded-full shadow-2xl flex items-center gap-2 border-2 border-[#52B788] hover:bg-[#2D6A4F] cursor-pointer transition-all"
                   >
                     <Eye className="w-3.5 h-3.5" />
                     Quick View
@@ -520,4 +521,3 @@ export default function Home() {
     </div>
   );
 }
-

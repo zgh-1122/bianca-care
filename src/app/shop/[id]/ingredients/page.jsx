@@ -215,25 +215,25 @@ export default function IngredientsPage() {
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#F5F5DC] via-[#EFEFE0] to-[#D8F3DC]/40 text-[#1B4332] px-3 sm:px-6 py-4 sm:py-8 relative overflow-x-hidden">
+    <div className="min-h-screen bg-gradient-to-b from-[#F5F5DC] via-[#EFEFE0] to-[#D8F3DC]/40 text-[#1B4332] px-3 sm:px-6 py-4 sm:py-8 relative overflow-x-hidden flex flex-col justify-between">
       <div className="absolute top-24 left-10 w-80 h-80 bg-[#52B788]/15 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="max-w-2xl mx-auto relative">
+      <div className="max-w-2xl mx-auto w-full relative">
         <Link
-          href={`/shop`}
-          className="inline-flex items-center gap-2 text-sm font-bold hover:text-[#52B788] transition-colors"
+          href={`/shop/${product.id}`}
+          className="inline-flex items-center gap-2 text-xs sm:text-sm font-bold hover:text-[#52B788] transition-colors"
         >
-          <ArrowLeft className="w-4 h-4" /> Back to shop
+          <ArrowLeft className="w-4 h-4" /> Back to product
         </Link>
 
-        <div className="text-center mt-2 sm:mt-4 space-y-1">
+        <div className="text-center mt-2 space-y-1">
           <h1 className="text-xl sm:text-3xl font-black leading-tight">{product.name}</h1>
           <p className="text-xs sm:text-sm text-[#2D6A4F] font-medium">
             Inside this bottle: {N} key botanical active ingredients
           </p>
         </div>
 
-        <div className="relative mx-auto mt-2 sm:mt-4 max-w-[320px] sm:max-w-none" style={{ height: stageH, width: "100%" }}>
+        <div className="relative mx-auto mt-2 max-w-[320px] sm:max-w-none" style={{ height: stageH, width: "100%" }}>
           <motion.img
             ref={imgRef}
             src={imageUrl}
@@ -310,7 +310,7 @@ export default function IngredientsPage() {
                   <span className="w-6 h-6 sm:w-10 sm:h-10 rounded-full bg-white border-2 border-[#1B4332] shadow-md flex items-center justify-center text-xs sm:text-xl">
                     {getIcon(name)}
                   </span>
-                  <span className="text-[8px] sm:text-xs font-black leading-tight max-w-[80px] sm:max-w-none truncate sm:overflow-visible">
+                  <span className="text-[9px] sm:text-xs font-black leading-tight max-w-[80px] sm:max-w-none truncate sm:overflow-visible">
                     {name}
                   </span>
                 </motion.div>
@@ -319,28 +319,34 @@ export default function IngredientsPage() {
           })}
         </div>
 
-        {/* Extra Information / Benefits Section with 2px Footer Green (#1B4332) Borders & Compact Spacing */}
-        <div className="mt-4 sm:mt-6 grid grid-cols-3 gap-2 px-1">
-          <div className="bg-[#E8F0E5] p-2.5 rounded-xl border-2 border-[#1B4332] text-center shadow-sm">
-            <Sparkles className="w-4 h-4 mx-auto text-[#1B4332] mb-0.5" />
-            <h4 className="text-[10px] sm:text-xs font-bold text-[#1B4332]">100% Organic</h4>
-            <p className="text-[8px] text-[#2D6A4F]">Pure extracts</p>
+        {/* Mobile par 1 column, large screens par 3 columns */}
+        <div className="mt-4 sm:mt-6 grid grid-cols-1 sm:grid-cols-3 gap-3">
+          <div className="bg-[#E8F0E5] p-3 rounded-2xl border-2 border-[#1B4332] text-center shadow-sm flex items-center justify-center gap-3 sm:flex-col sm:gap-1">
+            <Sparkles className="w-5 h-5 text-[#1B4332] shrink-0" />
+            <div>
+              <h4 className="text-xs sm:text-sm font-bold text-[#1B4332]">100% Organic</h4>
+              <p className="text-[10px] sm:text-xs text-[#2D6A4F]">Pure extracts & botanical active formulas</p>
+            </div>
           </div>
-          <div className="bg-[#E8F0E5] p-2.5 rounded-xl border-2 border-[#1B4332] text-center shadow-sm">
-            <ShieldCheck className="w-4 h-4 mx-auto text-[#1B4332] mb-0.5" />
-            <h4 className="text-[10px] sm:text-xs font-bold text-[#1B4332]">Dermatologist</h4>
-            <p className="text-[8px] text-[#2D6A4F]">Safe & tested</p>
+          <div className="bg-[#E8F0E5] p-3 rounded-2xl border-2 border-[#1B4332] text-center shadow-sm flex items-center justify-center gap-3 sm:flex-col sm:gap-1">
+            <ShieldCheck className="w-5 h-5 text-[#1B4332] shrink-0" />
+            <div>
+              <h4 className="text-xs sm:text-sm font-bold text-[#1B4332]">Dermatologist Tested</h4>
+              <p className="text-[10px] sm:text-xs text-[#2D6A4F]">Safe & approved for all skin types</p>
+            </div>
           </div>
-          <div className="bg-[#E8F0E5] p-2.5 rounded-xl border-2 border-[#1B4332] text-center shadow-sm">
-            <HeartPulse className="w-4 h-4 mx-auto text-[#1B4332] mb-0.5" />
-            <h4 className="text-[10px] sm:text-xs font-bold text-[#1B4332]">Deep Care</h4>
-            <p className="text-[8px] text-[#2D6A4F]">Long lasting</p>
+          <div className="bg-[#E8F0E5] p-3 rounded-2xl border-2 border-[#1B4332] text-center shadow-sm flex items-center justify-center gap-3 sm:flex-col sm:gap-1">
+            <HeartPulse className="w-5 h-5 text-[#1B4332] shrink-0" />
+            <div>
+              <h4 className="text-xs sm:text-sm font-bold text-[#1B4332]">Deep Skin Care</h4>
+              <p className="text-[10px] sm:text-xs text-[#2D6A4F]">Long lasting nourishment & hydration</p>
+            </div>
           </div>
         </div>
 
-        <div className="mt-3 sm:mt-4 bg-[#E8F0E5] p-3 rounded-xl border-2 border-[#1B4332] text-center shadow-sm mb-2">
-          <h3 className="text-xs sm:text-sm font-bold text-[#1B4332] mb-0.5">How To Apply & Use</h3>
-          <p className="text-[11px] sm:text-sm text-[#2D6A4F] max-w-md mx-auto leading-relaxed">
+        <div className="mt-3 bg-[#E8F0E5] p-4 rounded-2xl border-2 border-[#1B4332] text-center shadow-sm">
+          <h3 className="text-xs sm:text-sm font-bold text-[#1B4332] mb-1">How To Apply & Use</h3>
+          <p className="text-xs sm:text-sm text-[#2D6A4F] max-w-md mx-auto leading-relaxed">
             {product.howToUse}
           </p>
         </div>
